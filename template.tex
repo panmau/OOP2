@@ -33,8 +33,9 @@
 % Multi Columns
 \usepackage{multicol}
 
-%compact items
-\setlist{topsep=0pt, leftmargin=4mm, nolistsep}
+% more compact items. explicit parameters as I want some separation between items
+% see https://tex.stackexchange.com/questions/10684/vertical-space-in-lists
+\setlist{topsep=0pt, leftmargin=4mm,itemsep=1.5pt,partopsep=0pt, parsep=0pt}
 \setlength{\parindent}{0cm}
 
 %define header and footer
@@ -154,7 +155,7 @@
 % \renewcommand\section{\clearpage\stdsection}
 
 % Front page
-\newcommand{\AUTHOR}{Marius Zindel \& Maurice Panchaud }
+\newcommand{\AUTHOR}{M. Panchaud}
 \newcommand{\INSTITUTE}{Ostschweizer Fachhochschule}
 
 %dotted rule
