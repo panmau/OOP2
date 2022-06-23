@@ -129,15 +129,16 @@
 	aboveskip = 0em,
 	belowskip = 0em
 }
-\lstset{
-	style=eclipse-style
-	% literate=  % Allow for German characters in lstlistings.
-	% {Ö}{{\"O}}1
-	% {Ä}{{\"A}}1
-	% {Ü}{{\"U}}1
-	% {ü}{{\"u}}1
-	% {ä}{{\"a}}1
-	% {ö}{{\"o}}1}
+
+% https://tex.stackexchange.com/a/536018
+\lstset{style=eclipse-style}
+\lstset{literate=% Allow for German characters in lstlistings.
+	{Ö}{{\"O}}1
+	{Ä}{{\"A}}1
+	{Ü}{{\"U}}1
+	{ü}{{\"u}}1
+	{ä}{{\"a}}1
+	{ö}{{\"o}}1
 }
 
 % Theorems \begin{mytheo}{title}{label}
@@ -149,10 +150,6 @@
 {fonttitle=\bfseries}{rem}
 \newtcbtheorem[number within=section]{hint}{Hinweis}%
 {fonttitle=\bfseries}{hnt}
-
-% new section -> new page
-% \let\stdsection\section
-% \renewcommand\section{\clearpage\stdsection}
 
 % Front page
 \newcommand{\AUTHOR}{M. Panchaud}
@@ -170,3 +167,9 @@
 
 %no indentation
 \setlength{\parindent}{0cm}
+
+% no vertical distribution
+% explanation: we copy the macro columnbreak to stdcolumnbreak
+% we now redefine columnbreak to always fill up null space and then execute the standard columnbreak.
+\let\stdcolumnbreak\columnbreak
+\renewcommand\columnbreak{\vfill\null\stdcolumnbreak}

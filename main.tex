@@ -7,21 +7,14 @@
 
 \begin{document}
 
-%import front page
-% \input{./front.tex}
-
 %do multicols
 \begin{multicols*}{5}
     \setlength{\columnseprule}{0.4pt}
 		\footnotesize
-		
-%import tableofcontents
-% \input{./tableofcontents.tex}
 
 \section{Allgemeines}
 	\subsection{?}
-		
-		
+
 \section{Big O}
 
 	\subsection{Beweis}
@@ -37,18 +30,276 @@
 
 \section{Verschiedene Algorithmen}
 	\subsection{Eigenschaften}
+	\renewcommand{\arraystretch}{1.1}
+	\begin{tabular}{c | c | c}
+		Algo & Worst & Avg \\
+		\hline
+		Binary Search & O(log n) & \\
+		Insertion & O($n^2$) &  \\
+		Selection & O($n^2$) &  \\
+		Bubble & O($n^2$) &  \\
+		Merge & O(n log n) &  \\
+		Quick & O($n^2$) & O(n log n)
+	\end{tabular}
 	
 	\subsection{Implementationen}
 		\subsubsection{Binary Search}
-		
 			\begin{lstlisting}
-				
+public int searchBinary(int[] intArr, int start, int end, int searchElement) {
+	if (start > end || intArr.length == 0) {
+		return null;
+	}
+
+	int pivot = (start + end) / 2);
+	if (pivot >= intArr.length){
+		return null;
+	}
+	if (searchElement > intArr[pivot]) {
+		searchBinary(intArr, pivot + 1, end, searchElement);
+	} else if (searchElement < intArr[pivot] && start != pivot) {
+		searchBinary(intArr, start, pivot - 1, searchElement);
+	} else if(searchElement == intArr[pivot]) {
+		return intArr[pivot]
+	} else{
+		return null;
+	} }
 			\end{lstlisting}
 		
 		\subsubsection{Insertion Sort}
+		Für jedes neue Element wird geprüft, wo in der sortierten Liste es hingehört
+			\begin{lstlisting}
+void insertionSort(char[] data) {
+	for (int k = 1; k < data.length; k++) {
+		char cur = data[k];
+		int j = k;
+		while (j > 0 && data[j - 1] > cur) {
+			data[j] = data[j - 1];
+			j--;
+		}
+		data[j] = cur;
+	} }
+			\end{lstlisting}
 		
-		% etc!
+		\subsubsection{Selection Sort}
+		Kleinstes/grösstes Element suchen und an richtige Stelle verschieben
 		
+			\begin{lstlisting}
+void selectionSort(int[] array) {
+	int marker = array.length - 1;
+	while (marker >= 0) {
+		int max = 0;
+		for (int i = 1; i <= marker; i++) {
+			if (array[i] > array[max]) {
+				max = i;
+			}
+		}
+		swap(array, marker, max);
+		marker--;
+	} }
+			\end{lstlisting}
+		
+		\subsubsection{Bubble Sort}
+		Array von links nach rechts durchgehen, wenn Element grösser als rechter Nachbar, austausczhen
+			\begin{lstlisting}
+void bubbleSort(int[] array) {
+	for (var n = array.length; n > 1; n--) {
+		for (var i = 0; i < n - 1; i++) {
+			if (array[i] > array[i + 1]) {
+				swap(array, i, i + 1);
+			}
+		}
+	} }
+			\end{lstlisting}
+		
+		\subsubsection{Merge Sort}
+		S auf Folgen S1 und S2 verteilen, rekursiv sortieren, S1 und S2 in sortierter Folge zusammenfassen
+			\begin{lstlisting}
+int[] mergeSort(int[] elem, int left, int right) {
+	if (left == right)
+	  	return new int[]{elem[left]};
+	int middle = left + (right - left) / 2;
+	int[] leftArray = mergeSort(elem, left, middle);
+	int[] rightArray = mergeSort(elem, middle + 1, right);
+	return merge(leftArray, rightArray);
+}
+
+int[] merge(int[] leftArray, int[] rightArray) {
+	int leftLen = leftArray.length;
+	int rightLen = rightArray.length;
+	int[] target = new int[leftLen + rightLen];
+	int targetPos = 0;
+	int leftPos = 0;
+	int rightPos = 0;// As long as both arrays contain elements...
+	while (leftPos < leftLen && rightPos < rightLen) {
+		// Which one is smaller?
+		int leftValue = leftArray[leftPos];
+		int rightValue = rightArray[rightPos];
+		if (leftValue <= rightValue) {
+			target[targetPos++] = leftValue;
+			leftPos++;
+		} else {
+			target[targetPos++] = rightValue;
+			rightPos++;
+		}
+	}
+    // Copy the rest
+	while (leftPos < leftLen) {
+		target[targetPos++] = leftArray[leftPos++];
+	}
+	while (rightPos < rightLen) {
+		target[targetPos++] = rightArray[rightPos++];
+	}
+	return target;
+}
+			\end{lstlisting}
+		
+		\subsubsection{Quick Sort}
+		Pivot wählen, in zwei Arrays teilen, eines mit x < Pivot, eines mit x > Pivot, rekursiv auf Unterarrays Quicksort aufrufen
+			\begin{lstlisting}
+void quickSort(int[] arr, int low, int high) {
+	if (low < high) {
+		int pi = partition(arr, low, high);
+		quickSort(arr, low, pi - 1);
+		quickSort(arr, pi + 1, high);
+	}
+}
+	
+int partition(int[] arr, int low, int high) {
+	int pivot = arr[high];
+	int i = low - 1;
+	for (int j = low; j <= high - 1; j++) {
+		if (arr[j] < pivot) {
+			i++;
+			swap(arr, i, j);
+		}
+	}
+	swap(arr, i + 1, high);
+	return i + 1;
+}
+			\end{lstlisting}
+		
+\section{Bäume}
+	\subsection{Höhe}
+		\begin{lstlisting}
+public int height(Position<E> p) {
+	int h = 0;
+	for (Position<E> c : children(p)) {
+		h = Math.max(h, 1 + height(c));
+	}
+	return h; }
+		\end{lstlisting}
+	
+	\subsection{Tiefe}
+		\begin{lstlisting}
+public int depth(Position<E> p) {
+	if (isRoot(p)) {
+		return 0;
+	} else {
+		return 1 + depth(parent(p));
+	} }
+		\end{lstlisting}
+	\subsection{Traversierung}
+		\subsubsection{Preorder W-L-R}
+			\begin{lstlisting}
+visit(v)
+for each child w of v
+  preOrder(w)
+			\end{lstlisting}
+		
+		\subsubsection{Postorder L-R-W}
+			\begin{lstlisting}
+for each child w of v
+  postOrder(w)
+visit(v)
+			\end{lstlisting}
+		
+		\subsubsection{Breadth-First}
+		Alle Knoten der Tiefe t besuchen, bevor Knoten der Tiefe t+1 besucht werden
+			\begin{lstlisting}
+// Initialize queue Q containing root
+while Q not empty
+  v = Q.dequeue()
+  visit(v)
+  for each child w in children(v)
+    Q.enqueue(w)
+			\end{lstlisting}
+		
+		\subsubsection{Inorder L-W-R}
+			\begin{lstlisting}
+if hasLeft(v)
+  inOrder(left(v))
+visit(v)
+if hasRight(v)
+  inOrder(right(v))
+			\end{lstlisting}
+
+	\subsection{Preorder Iterator}
+		\begin{lstlisting}
+public T next() {
+if (stack.empty()) {
+	stack.push(root);
+}
+Node<T> node = stack.pop();
+if (node.getRight() != null) {
+	stack.push(node.getRight());
+}
+if (node.getLeft() != null) {
+	stack.push(node.getLeft());
+}
+if (stack.empty()) {
+	root = null;
+}
+return node.getValue(); }
+		\end{lstlisting}
+
+
+\section{Algorithmenparadigmen}
+	\subsection{Backtracking}
+		\subsubsection{Cookbook}
+			\begin{itemize}
+				\item Position markieren
+				\item Rekursionsabbruch: return true
+				\item Alle Optionen probieren
+					\item => neues Feld festlegen
+					\item => Überprüfen ob gültig \& nicht besucht
+					\subitem => prüfen ob rekursiver Aufruf true? 
+					\subitem Falls ja: return true
+				\item Backtracking: Markierung vom Feld entfernen und return false
+			\end{itemize}			
+		
+		\subsubsection{Beispiel Knights Tour}
+			\begin{lstlisting}
+private boolean isValid(int x, int y) {
+	return x >= 0 && y >= 0 && x < N && y < N;
+}
+
+public boolean knightTour(int[][] visited, int x, int y, int pos) {
+	// jetzige Position markieren
+	visited[x][y] = pos;
+	// alle Felder besucht => abbrechen (return true)
+	if (pos >= N * N) {
+		print(visited);
+		return true;
+	}
+// Alle erlaubten Bewegungen überprüfen
+	for (int k = 0; k < 8; k++) {
+		int newX = x + row[k];
+		int newY = y + col[k];
+		// neue Position auf Feld und noch nicht besucht
+		if (isValid(newX, newY) && visited[newX][newY] == 0) {
+			// Wenn die Rekursion ein Weg gefunden hat
+			if (knightTour(visited, newX, newY, pos + 1)) {
+				return true;
+			}
+		}
+	}
+	
+	// Markierung entfernen und backtracken
+	visited[x][y] = 0;
+	return false;
+}
+			\end{lstlisting}
+
 
 \section{Beispiele}
 
@@ -100,9 +351,6 @@ switch(x) {
 	}
 	\end{lstlisting}
 
-
-
-	\vfill\null
 	\columnbreak
 
 	\subsubsection{Alle Wörter aus Buchstaben generieren}
