@@ -14,6 +14,7 @@
 
 \section{Allgemeines}
 	\subsection{?}
+	% TODO?!
 
 \section{Big O}
 
@@ -27,6 +28,20 @@
 		\item $=> c=3$ und $n0=10$
 		\item Es gibt viele Belegungen für $c$ und $n0$
 	\end{itemize}
+
+	\subsection{Beispiel}
+	\begin{lstlisting}
+public static void function(int[] array) {
+	// O(n)
+	for (int i = 1; i < array.length + 1; i++) {
+		// O(log n)
+		for (int i1 = 1; i1 < array.length; i1*=2) {
+			System.out.println(array[i - 1]);
+		}
+	}
+}
+// -> O(n * log n)
+	\end{lstlisting}
 
 \section{Verschiedene Algorithmen}
 	\subsection{Eigenschaften}
@@ -300,7 +315,153 @@ public boolean knightTour(int[][] visited, int x, int y, int pos) {
 }
 			\end{lstlisting}
 
+	\subsection{Greedy}
+	Lösung wählen, die im Teilschritt möglichst nahe ans Ziel kommen.
+	Beispiel Rückgeld: Grösste Münze von Betrag abziehen
 
+	\subsection{Teile \& Herrsche}
+		\begin{itemize}
+			\item Problem aufteilen
+			\item Kleinere Probleme lösen
+			\item Rekursive Rückführung des Problems auf identisches Problem mit kleinerer Eingabemenge
+		\end{itemize}
+	
+	\subsection{Dynamische Programmierung}
+		\begin{itemize}
+			\item Greedy
+			\item Mehrfach auftretende Probleme nur einmal berechnen
+			\item Lösung auf Grundlage bereits berechneter Ergebnisse finden
+		\end{itemize}
+
+\section{Abstrakter Datentyp}
+Beschreibt Datenstruktur unabhängig von konkreter Implementierung.
+Beschreibt Attribute, Operationen auf den Attributen, Ausnahmen und Fehler
+Beschreibt das Was aber nicht das Wie.
+
+\subsection{Datenstrukturen}
+	\begin{itemize}
+		\item Speichern und organisieren Daten.
+		\item Implementieren einen ADT (Schnittstelle)
+	\end{itemize}
+
+	\subsubsection{Laufzeiten}
+		\renewcommand{\arraystretch}{1.1}
+		\begin{tabular}{c | c | c}
+			& Array & Linked List \\
+			\hline
+			Lesen & O(1) & O(n) \\
+			Einfügen & O(n) & O(1)  \\
+			Suchen & O(n) & O(n) \\
+		\end{tabular}
+
+\section{Design Patterns}
+	Arten von Design Patterns
+	\begin{itemize}
+		\item \textbf{Erzeugunsmuster}: Abstrahieren Instanziierung 
+		\item => (Factory, Singleton, ...)
+		\item \textbf{Strukturmuster}: Zusammensetzung von Klassen \& Objekten zu grösseren Strukturen
+		\item => Adapter, Fassade, ...
+		\item \textbf{Verhaltensmuster}: Algorithmen und Verteilung von Verantwortung zwischen Objekten
+		\item => Iterator, Visitor, ...
+	\end{itemize}
+	\subsection{Iterator}
+	Sequentiell auf Elemente in Aggregatobjekt zugreifen, ohne zugrundeliegende Struktur offen zu legen
+	
+	\subsection{Adapter}
+	Klasse modifizieren, dass Schnittstelle zu Schnittstelle der anderen Klasse passt.
+	
+	Ermöglicht Code wieder zu verwenden ohne anzupassen.
+	
+	Objekt Adapter:
+	\begin{lstlisting}
+class Adapter extends ClassWeWantToMatch {
+	private ExistingClass obj;
+	public void method() {
+		obj.otherMethod();
+	}
+}
+	\end{lstlisting}
+
+	\subsection{Template}
+	\begin{itemize}
+		\item Gemeinsame unveränderlichen Teile in abstrakter Klasse implementiert
+		\item Variable Schritte werden in Methode ausgelagert
+		\item Variable Schritte repräsentieren Hooks/Platzhalter, die in konkreten Subklassen implementiert werden.
+	\end{itemize}
+
+	\subsection{Visitor}
+	Beschreibt Operationen auf Elementen einer anderen Datenstruktur.
+	
+	Trennung von Algorithmen und Datenstrukturen auf denen sie operieren. 
+	
+	Visitor enthält Algorithmen für unterschiedliche Datenstrukturen.
+	\begin{itemize}
+		\item \textbf{Einfache} Erweiterbarkeit, wenn neue Algorithmen hinzugefügt werden
+		\item \textbf{Grösserer} Änderungsbedarf, wenn neue Klassen ergänzt werden
+	\end{itemize}
+
+\section{Hash}
+
+	\subsection{Eigenschaften guter Hashfunktionen}
+	\begin{itemize}
+		\item konsistente Ergebnisse
+		\item konstanter Zeitbedarf
+		\item Gleichmässige Verteilung der Schlüssel
+	\end{itemize}
+
+	\subsection{Mögliche Hash Algorithmen}
+		\subsubsection{Integer Cast}
+		Schlüssel als Integer interpretieren
+		
+		• Gut, wenn Anzahl Bits Interpretation als Integer erlaubt
+	
+		\subsubsection{Komponentensumme}
+		• Bits des Schlüssels in Komponenten fixer Länge (16/32 Bits) unterteilen
+		
+		• Komponenten summieren, Overflow ignorieren
+		
+		• Gut für Schlüssel fixer Länge, grösser/gleich Anzahl Bits von Integer
+		
+		\begin{lstlisting}
+int hash = 0;
+for (int i = 0; i < s.length(); i++) {
+	hash = (R * hash + s.charAt(i)) % m;
+	// R ist Konstante. Eine kleine Primzahl
+}
+		\end{lstlisting}	
+	
+	\subsection{Polynom-Akkumulation}
+	• Hashing von Werten der Form ($x_0, x_1 , ..., x_n-1$") schwierig durch Addition
+	
+	% TODO: How do I get n-1 at the bottom instead of just n?
+	Polynom:
+	$p(z) = a_0 + a_1z + a_2z^2 + ... + a_n-1$
+		
+	Gut für Strings. Mit z=33 maximal 6 Kollisionen bei 50'000 englischen Wörtern.
+		
+	\subsection{Kollisionsbehandlung}
+		\subsubsection{Geschlossene Adressierung}
+		Behälter von Map sind (verkettete) Listen
+		
+		Platz nicht begrenzt, Prinzipiell keine Überläufer
+		
+		\subsubsection{Offene Adressierung}
+		Für Überläufer in anderen Behältern Platz suchen
+		
+		Sondierungsfolge bestimmt Weg zum Speichern und Wiederauffinden der Überläufer
+		
+		Lineare Sondierung: Überläufer in nächste verfügbar Zelle einfügen
+		
+		\textbf{Löschen}: Erfordert besondere Behandlung.
+		
+		Wird Datensatz gelöscht, kann dies Sondierungsfolge für anderen Datensatz unterbrechen.
+		
+		Datensätze nicht physisch löschen, sondern nur als gelöscht markieren. (Behälter ist: frei, belegt oder gelöscht)
+		
+	\subsection{Erweiterbares Hashing}
+		% TODO
+
+\columnbreak
 \section{Beispiele}
 
 	\subsubsection{Switch - Case}
