@@ -45,6 +45,7 @@ public static void function(int[] array) {
 
 \section{Verschiedene Algorithmen}
 	\subsection{Eigenschaften}
+
 	\renewcommand{\arraystretch}{1.1}
 	\begin{tabular}{c | c | c}
 		Algo & Worst & Avg \\
@@ -194,7 +195,15 @@ int partition(int[] arr, int low, int high) {
 			\end{lstlisting}
 		
 \section{Bäume}
+	\begin{itemize}
+		\item \textbf{innere Knoten}: Knoten mit min. einem Kind
+		\item \textbf{Blatt}: Knoten ohne Kinder
+		\item \textbf{Wurzel}: Knoten ohne Elternknoten
+		
+	\end{itemize}
+
 	\subsection{Höhe}
+	Maximale Tiefe der Knoten im Baum
 		\begin{lstlisting}
 public int height(Position<E> p) {
 	int h = 0;
@@ -205,6 +214,7 @@ public int height(Position<E> p) {
 		\end{lstlisting}
 	
 	\subsection{Tiefe}
+	Anzahl Vorgänger
 		\begin{lstlisting}
 public int depth(Position<E> p) {
 	if (isRoot(p)) {
@@ -345,13 +355,21 @@ Beschreibt das Was aber nicht das Wie.
 	\end{itemize}
 
 	\subsubsection{Laufzeiten}
-		\renewcommand{\arraystretch}{1.1}
+
 		\begin{tabular}{c | c | c}
 			& Array & Linked List \\
 			\hline
 			Lesen & O(1) & O(n) \\
 			Einfügen & O(n) & O(1)  \\
 			Suchen & O(n) & O(n) \\
+		\end{tabular}
+	
+		\begin{tabular}{c | c | c}
+			\textbf{HashMap} & Avg & Worst \\
+			\hline
+			Lesen & O(1) & O(n) \\
+			Einfügen & O(1) & O(n)  \\
+			Suchen & O(1) & O(n) \\
 		\end{tabular}
 
 \section{Design Patterns}
@@ -459,7 +477,61 @@ for (int i = 0; i < s.length(); i++) {
 		Datensätze nicht physisch löschen, sondern nur als gelöscht markieren. (Behälter ist: frei, belegt oder gelöscht)
 		
 	\subsection{Erweiterbares Hashing}
-		% TODO
+		Beim erweiterbaren Hashing wird binäres Ergebnis der Hashfunktion verwendet, die auf einen grösaseren Bereich abbildet.
+		
+		Beim Überlauf eines Behälters wird ein weiteres Bit des Hashwertes hinzugezogen.
+		
+		Somit ist keine Reorganisation der gesamten Tabelle notwendig.
+
+\section{Generics}
+Type Erasure!
+
+	\begin{tabular}{c | c}
+		\textbf{Conventions} &  \\
+		\hline
+		T & Type \\
+		K & Key \\
+		V & Value \\
+		N & Number \\
+		E & Element \\
+		S, U, V, ... & 2nd, 3rd, 4th \\
+	\end{tabular}
+
+	\begin{lstlisting}
+Stack<String> genericStack = new Stack<String>();
+Stack rawStack = genericStack;
+// This works but loses type info, gives a warning
+// Type only gets checked at runtime
+	\end{lstlisting}
+
+\vspace{5pt}
+
+	\begin{lstlisting}
+public class Stack<T> { ... }
+interface Iterator<E> { ... }
+
+// Class doesn't necessarily need to be generic
+public <E> Stack<E> push(E value) { ... }
+	\end{lstlisting}
+
+	\subsection{Constraints}
+		\begin{lstlisting}
+... <T extends Graphic>
+... <T extends Type1 & Type2 & ... >
+// As Java doesn't allow Diamond inheritance only one can be a class
+... <T super Graphic>
+
+		\end{lstlisting}
+	
+	\subsection{Generische Type Invariance}
+		\begin{lstlisting}
+// This doesn't work. 
+// Types need to be exactly the same
+List<Number> ns = new ArrayList<Integer>();
+
+Collection<? extends T> x = ....
+Collection<? super T> y = ...
+		\end{lstlisting}
 
 \columnbreak
 \section{Beispiele}
