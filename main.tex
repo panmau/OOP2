@@ -228,16 +228,22 @@ int partition(int[] arr, int low, int high) {
 
 		\subsubsection{Heap Sort}
 			\begin{itemize}
-				\item Build a max heap from the input data.
-				\item At this point, the largest item is stored at the root of the heap. Replace it with the last item of the heap followed by reducing the size of heap by 1. Finally, heapify the root of tree.
+				\item \textbf{max heap}: tree where parents are always > childs.
+				\item \textbf{heapify}: creates max heap but assumes part of array is already sorted
+				\item Build a max heap from the input data
+				\item At this point, the largest item is stored at the root of the heap. Replace it with the last item of the heap followed by reducing the size of heap by 1, as this item is now sorted.
+				\item Finally, heapify the root of tree.
 				\item Repeat above steps while size of heap is greater than 1.			
 			\end{itemize}
+		
+			\vspace{2pt}
 			\begin{lstlisting}
 public void sort(int arr[]) { 
 	int n = arr.length; 
 	// Build heap (rearrange array) 
-	for (int i = n / 2 - 1; i >= 0; i--) 
-	heapify(arr, n, i); 
+	for (int i = n / 2 - 1; i >= 0; i--) {
+		heapify(arr, n, i); 
+	}
 	// One by one extract an element from heap 
 	for (int i = n - 1; i >= 0; i--) { 
 		// Move current root to end 
@@ -258,12 +264,14 @@ void heapify(int arr[], int n, int i) {
 	int r = 2 * i + 2;  // right = 2*i + 2 
 	
 	// If left child is larger than root 
-	if (l < n && arr[l] > arr[largest]) 
-	largest = l; 
+	if (l < n && arr[l] > arr[largest]) {
+		largest = l; 
+	}
 	
 	// If right child is larger than largest so far 
-	if (r < n && arr[r] > arr[largest]) 
-	largest = r; 
+	if (r < n && arr[r] > arr[largest]) {
+		largest = r; 
+	}
 	
 	// If largest is not root 
 	if (largest != i) { 
