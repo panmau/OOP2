@@ -23,12 +23,13 @@
 \usepackage{amsfonts}
 \usepackage{enumitem}
 
+% easier nested lists
+% http://tug.ctan.org/macros/latex/contrib/outlines/outlines.pdf
+\usepackage{outlines}
+
 % graphic
 \usepackage{graphicx}
 \graphicspath{{graphic/}} 
-
-%colors
-% \usepackage{xcolor}
 
 % Multi Columns
 \usepackage{multicol}
@@ -42,14 +43,14 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 
-\fancyhead[RO]{\AUTHOR| \INSTITUTE}
+\fancyhead[RO]{\AUTHOR\hspace{4pt}|\hspace{4pt}\INSTITUTE}
 \fancyhead[LO]{\TITLE}
-\fancyfoot[RO]{09.01.2022}
+\usepackage[style=iso]{datetime2}
+\fancyfoot[RO]{\today}
 \renewcommand\headrulewidth{0pt}
 \renewcommand\footrulewidth{0pt}
 \headsep = -2pt
 \footskip = 0pt
-
 
 % Define Section Format
 \usepackage{sectsty}

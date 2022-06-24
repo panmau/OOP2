@@ -8,14 +8,11 @@
 \begin{document}
 
 %do multicols
-\begin{multicols*}{5}
-    \setlength{\columnseprule}{0.4pt}
+\begin{multicols*}{4}
+    \setlength{\columnseprule}{0.2pt}
 		\footnotesize
 
-\section{Allgemeines}
-	\subsection{?}
-	% TODO?!
-
+% TODO improve places where columnbreaks are done as soon as content is pretty much final
 \section{Big O}
 
 	\subsection{Beweis}
@@ -55,11 +52,25 @@ public static void function(int[] array) {
 		Selection & O($n^2$) &  \\
 		Bubble & O($n^2$) &  \\
 		Merge & O(n log n) &  \\
-		Quick & O($n^2$) & O(n log n)
+		Quick & O($n^2$) & O(n log n) \\
+		Heap & O(n log n) & O(n log n) \\
 	\end{tabular}
 	
 	\subsection{Implementationen}
 		\subsubsection{Binary Search}
+		Nur wenn Array bereits sortiert ist. 
+		
+		Wiederholtes "halbieren" der möglichen Kandidaten.
+		
+		$ Pivot = \dfrac{low + high}{2}  $
+		
+		Wenn gesuchter Wert grösser als Pivot: Suche im rechten Teilbereich
+		
+		Wenn gesuchter Wert kleiner als Pivot: Suche im linken Teilbereich
+		
+		Wert gefunden: Abbruch und Rückgabe des Wertes
+		
+		\textbf{Rekursiv}
 			\begin{lstlisting}
 public int searchBinary(int[] intArr, int start, int end, int searchElement) {
 	if (start > end || intArr.length == 0) {
@@ -79,6 +90,27 @@ public int searchBinary(int[] intArr, int start, int end, int searchElement) {
 	} else{
 		return null;
 	} }
+			\end{lstlisting}
+		
+		\textbf{Iterativ}
+			\begin{lstlisting}
+<T extends Comparable<T>> int searchBinaryIterative(List<? extends T> list, T searchElement) { 
+	int start = 0; 
+	int end = list.size() - 1; 
+	while (start <= end) { 
+		int pivot = start + ((end - start) / 2); 
+		int compareResult = searchElement.compareTo(list.get(pivot)); 
+		if (compareResult > 0) { 
+			start = pivot + 1; 
+		} else if (compareResult < 0) { 
+			end = pivot - 1; 
+		} else { 
+			// index found 
+			return pivot; 
+		} 
+	} 
+	return -1; 
+} 
 			\end{lstlisting}
 		
 		\subsubsection{Insertion Sort}
@@ -193,13 +225,67 @@ int partition(int[] arr, int low, int high) {
 	return i + 1;
 }
 			\end{lstlisting}
+
+		\subsubsection{Heap Sort}
+			\begin{itemize}
+				\item Build a max heap from the input data.
+				\item At this point, the largest item is stored at the root of the heap. Replace it with the last item of the heap followed by reducing the size of heap by 1. Finally, heapify the root of tree.
+				\item Repeat above steps while size of heap is greater than 1.			
+			\end{itemize}
+			\begin{lstlisting}
+public void sort(int arr[]) { 
+	int n = arr.length; 
+	// Build heap (rearrange array) 
+	for (int i = n / 2 - 1; i >= 0; i--) 
+	heapify(arr, n, i); 
+	// One by one extract an element from heap 
+	for (int i = n - 1; i >= 0; i--) { 
+		// Move current root to end 
+		int temp = arr[0]; 
+		arr[0] = arr[i]; 
+		arr[i] = temp; 
+		
+		// call max heapify on the reduced heap 
+		heapify(arr, i, 0); 
+	} 
+} 
+
+// To heapify a subtree rooted with node i which is 
+// an index in arr[]. n is size of heap 
+void heapify(int arr[], int n, int i) { 
+	int largest = i;  // Initialize largest as root 
+	int l = 2 * i + 1;  // left = 2*i + 1 
+	int r = 2 * i + 2;  // right = 2*i + 2 
+	
+	// If left child is larger than root 
+	if (l < n && arr[l] > arr[largest]) 
+	largest = l; 
+	
+	// If right child is larger than largest so far 
+	if (r < n && arr[r] > arr[largest]) 
+	largest = r; 
+	
+	// If largest is not root 
+	if (largest != i) { 
+		int swap = arr[i]; 
+		arr[i] = arr[largest]; 
+		arr[largest] = swap; 
+		
+		// Recursively heapify the affected sub-tree 
+		heapify(arr, n, largest); 
+	} 
+} 
+			\end{lstlisting}
+
+		
 		
 \section{Bäume}
 	\begin{itemize}
-		\item \textbf{innere Knoten}: Knoten mit min. einem Kind
+		\item \textbf{innerer Knoten}: Knoten mit min. einem Kind
 		\item \textbf{Blatt}: Knoten ohne Kinder
 		\item \textbf{Wurzel}: Knoten ohne Elternknoten
-		
+		\item \textbf{Geschwister}: Knoten mit selben Eltern
+		\item \textbf{Vorgängerknoten}: Eltern, Grosseltern, ...
 	\end{itemize}
 
 	\subsection{Höhe}
@@ -261,44 +347,48 @@ if hasRight(v)
 	\subsection{Preorder Iterator}
 		\begin{lstlisting}
 public T next() {
-if (stack.empty()) {
-	stack.push(root);
+	if (stack.empty()) {
+		stack.push(root);
+	}
+	Node<T> node = stack.pop();
+	if (node.getRight() != null) {
+		stack.push(node.getRight());
+	}
+	if (node.getLeft() != null) {
+		stack.push(node.getLeft());
+	}
+	if (stack.empty()) {
+		root = null;
+	}
+	return node.getValue(); 
 }
-Node<T> node = stack.pop();
-if (node.getRight() != null) {
-	stack.push(node.getRight());
-}
-if (node.getLeft() != null) {
-	stack.push(node.getLeft());
-}
-if (stack.empty()) {
-	root = null;
-}
-return node.getValue(); }
 		\end{lstlisting}
-
 
 \section{Algorithmenparadigmen}
 	\subsection{Backtracking}
 		\subsubsection{Cookbook}
-			\begin{itemize}
-				\item Position markieren
-				\item Rekursionsabbruch: return true
-				\item Alle Optionen probieren
-					\item => neues Feld festlegen
-					\item => Überprüfen ob gültig \& nicht besucht
-					\subitem => prüfen ob rekursiver Aufruf true? 
-					\subitem Falls ja: return true
-				\item Backtracking: Markierung vom Feld entfernen und return false
-			\end{itemize}			
+			\renewcommand{\outlineii}{enumerate}
+			\renewcommand{\outlineiii}{enumerate}
+			\begin{outline}
+				\1 Position markieren
+				\1 Rekursionsabbruch (zB alles besucht, Ausgang gefunden): return true 
+				\1 Alle Optionen probieren
+					\2 neues Feld festlegen
+					\2 Überprüfen ob gültig \& nicht besucht
+						\3 Wenn ja: prüfen ob rekursiver Aufruf true? 
+							\4 Wenn ja: return true
+				\1 Backtracking: Markierung vom Feld entfernen und return false
+			\end{outline}
+			\renewcommand{\outlineii}{itemize}
+			\renewcommand{\outlineiii}{itemize}
 		
 		\subsubsection{Beispiel Knights Tour}
 			\begin{lstlisting}
-private boolean isValid(int x, int y) {
+boolean isValid(int x, int y) {
 	return x >= 0 && y >= 0 && x < N && y < N;
 }
 
-public boolean knightTour(int[][] visited, int x, int y, int pos) {
+boolean knightTour(int[][] visited, int x, int y, int pos) {
 	// jetzige Position markieren
 	visited[x][y] = pos;
 	// alle Felder besucht => abbrechen (return true)
@@ -306,14 +396,14 @@ public boolean knightTour(int[][] visited, int x, int y, int pos) {
 		print(visited);
 		return true;
 	}
-// Alle erlaubten Bewegungen überprüfen
+	// Alle erlaubten Bewegungen überprüfen
 	for (int k = 0; k < 8; k++) {
 		int newX = x + row[k];
 		int newY = y + col[k];
 		// neue Position auf Feld und noch nicht besucht
 		if (isValid(newX, newY) && visited[newX][newY] == 0) {
 			// Wenn die Rekursion ein Weg gefunden hat
-			if (knightTour(visited, newX, newY, pos + 1)) {
+			if (knightTour(visited, newX, newY, pos + 1)){
 				return true;
 			}
 		}
@@ -323,6 +413,83 @@ public boolean knightTour(int[][] visited, int x, int y, int pos) {
 	visited[x][y] = 0;
 	return false;
 }
+			\end{lstlisting}
+		
+		\subsubsection{Beispiel Sudoku Solver}
+			\begin{lstlisting}
+public class SudokuSolver { 
+	public static final int size = 9; 
+	
+	boolean isNumberUsedInRow(int[][] fields, int row, int number) { 
+		for(int i = 0; i < size; i++) { 
+			if(fields[row][i] == number) { 
+				return true; 
+			} 
+		} 
+		return false; 
+	} 
+	
+	boolean isNumberUsedInCol(int[][] fields, int col, int number) { 
+		for(int i = 0; i < size; i++) { 
+			if(fields[i][col] == number) { 
+				return true; 
+			} 
+		} 
+		return false; 
+	} 
+	
+	boolean isNumberUsedInSquare(int[][] fields, int row, int col, int number) { 
+		// start at the top left value 
+		col = col - (col % 3); 
+		row = row - (row % 3); 
+		for(int i = 0; i < 3; i++) { 
+			for(int j = 0; j < 3; j++) { 
+				if(fields[row + i][col + j] == number) { 
+					return true; 
+				} 
+			} 
+		} 
+		return false; 
+	} 
+	
+	boolean isNumberValid(int[][] fields, int row, int col, int number) { 
+		return !isNumberUsedInRow(fields, row, number) && !isNumberUsedInCol(fields, col, number) && 
+		!isNumberUsedInSquare(fields, row, col, number); 
+	} 
+	
+	private int[] getNextFreeField(int[][] fields) { 
+		for(int i = 0; i < size; i++) { 
+			for(int j = 0; j < size; j++) { 
+				if(fields[i][j] == 0) { 
+					return new int[]{i,j}; 
+				} 
+			} 
+		} 
+		return new int[0]; 
+	} 
+	
+	public boolean solveSudoku(int[][] fields) { 
+		int[] freeField = getNextFreeField(fields); 
+		if(freeField.length == 0) { 
+			return true; 
+		} 
+		int x = freeField[0]; 
+		int y = freeField[1]; 
+		
+		for(int i = 1; i < size+1; i++) { 
+			if(isNumberValid(fields, x, y, i)) { 
+				fields[x][y] = i; 
+				if(solveSudoku(fields)) { 
+					return true; 
+				} 
+			} 
+			
+		} 
+
+		fields[x][y] = 0; 
+		return false; 
+	} 
+} 
 			\end{lstlisting}
 
 	\subsection{Greedy}
@@ -342,6 +509,52 @@ public boolean knightTour(int[][] visited, int x, int y, int pos) {
 			\item Mehrfach auftretende Probleme nur einmal berechnen
 			\item Lösung auf Grundlage bereits berechneter Ergebnisse finden
 		\end{itemize}
+
+\section{Rekursion}
+	\begin{outline}
+		\1 Rekursive Aufrufe werden auf Call Stack gelegt, bis Base Case erreicht
+		\2 Aufrufe führen Richtung Base Case
+		\1 Base Case erreicht
+		\2 Rekursion bricht ab
+		\2 Wert wird zurückgegeben
+		\2 Abarbeiten der Stack Frames
+	\end{outline}
+
+	\subsection{Cookbook}
+		\begin{itemize}
+			\item Was ist der Base Case?
+			\item Wie kann das Problem verkleinert werden?
+		\end{itemize}
+	
+	\subsection{Arten}
+		\begin{itemize}
+			\item Lineare Rekursion: Rekursion macht höchstens einen weiteren Aufruf
+			\item Binäre Rekursion: Wenn zwei rekursive Aufrufe in allen nicht-terminalen Aufrufen ausgeführt werden
+			\item Endrekursion: Rekursiver Aufruf ist \underline{letzte} Anweisung in der Funktion
+		\end{itemize}
+
+	\subsection{Endrekursion}
+	Weniger Speicher benötigt.
+		\begin{lstlisting}
+private static int tailrecsum(int x, int total) {
+	if (x == 0) {
+		return total;
+	} else {
+		// Rekursiver Aufruf ist letzte Anweisung!
+		return tailrecsum(x - 1, total + x);
+	}
+}
+
+// Ohne Endrekursion
+private static int recsum(int x) {
+	if (x == 0) {
+		return 0;
+	} else {
+		// Addition ist letzte Anwesiung!
+		return x + recsum(x - 1);
+	}
+}
+		\end{lstlisting}
 
 \section{Abstrakter Datentyp}
 Beschreibt Datenstruktur unabhängig von konkreter Implementierung.
@@ -371,6 +584,114 @@ Beschreibt das Was aber nicht das Wie.
 			Einfügen & O(1) & O(n)  \\
 			Suchen & O(1) & O(n) \\
 		\end{tabular}
+
+\section{Queue}
+	\begin{itemize}
+		\item enqueue(E): Element am Ende einfügen
+		\item Object dequeue(): Element vom Anfang entfernen und
+		zurückgeben
+		\item E first(): liefert erstes Element, ohne es zu entfernen
+		\item integer size(): Gespeicherte Elemente
+		\item boolean isEmpty(): ist Queue leer?
+	\end{itemize}
+
+	\subsection{Priority Queue}
+		\begin{itemize}
+			\item insert(k, v): Fügt Eintrag mit Schlüssel k und Wert v ein
+			\item removeMin(): Entfernt Eintrag mit kleinstem Schlüssel und gibt ihn zurück
+			\item min(): Liefert Eintrag mit kleinstem Schlüssel, ohne diesen zu entfernen
+			\item size(): Anzahl Elemente in Queue
+			\item isEmpty(): Sind Elemente in der Queue?
+		\end{itemize}
+		
+		\begin{tabular}{c | c | c}
+			\textbf{Methode} & \textbf{Unsorted List} & \textbf{Sorted List} \\
+			\hline
+			\textbf{size} & O(1) & O(1) \\
+			\textbf{isEmpty} & O(1) & O(1) \\
+			\textbf{insert} & O(1) & O(n) \\
+			\textbf{min} & O(n) & O(1) \\
+			\textbf{removeMin} & O(n) & O(1) \\
+		\end{tabular}
+	
+	Sorted
+	\begin{lstlisting}
+public class SortedPriorityQueue<K,V> extends AbstractPriorityQueue<K,V>  {
+	// size left out as its just list.size()
+	
+	public Entry<K, V> insert(K key, V value) {		
+		checkKey(key);
+		var newest = new PriorityQueueEntry<>(key, value);
+		
+		if (list.size() == 0) {
+			list.add(newest);
+			return newest;
+		}
+		
+		Entry<K,V> walk = list.get(list.size() - 1);
+		int index = 0;
+		
+		for (index = list.size() - 1; index >= 0 && compare(newest, walk) > 0; index--) {
+			walk = list.get(index);	
+		}
+		
+		if (index == -1) {
+			list.add(newest);
+		} else {
+			list.add(index, newest);
+		}
+		return newest;
+	}
+	
+	public Entry<K, V> min() {
+		return list.get(0);
+	}
+	
+	public Entry<K, V> removeMin() {
+		return list.remove(0);
+	}
+}
+	\end{lstlisting}
+
+	Unsorted
+	\begin{lstlisting}
+public class UnsortedPriorityQueue<K,V> extends AbstractPriorityQueue<K,V> {
+	// size left out as its just return list.size()
+	
+	private Entry<K,V> findMin() {
+		Entry<K,V> small = list.get(0);
+		for (Entry<K,V> walk : list) {
+			if (compare(walk, small) < 0) {
+				small = walk;
+			}
+		}
+		return small;
+	}
+	
+	public Entry<K,V> insert(K key, V value) throws IllegalArgumentException {
+		checkKey(key);
+		Entry<K,V> newest = new PriorityQueueEntry<>(key, value);
+		list.add(newest);
+		return newest;
+	}
+
+	public Entry<K,V> min() {
+		if (list.isEmpty()) {
+			return null;
+		}
+		return findMin();
+	}
+
+	public Entry<K,V> removeMin() {
+		if (list.isEmpty()) {
+			return null;
+		}
+		var entry = findMin();
+		list.remove(entry);
+		return entry;
+	}
+}
+	\end{lstlisting}
 
 \section{Design Patterns}
 	Arten von Design Patterns
@@ -449,11 +770,10 @@ for (int i = 0; i < s.length(); i++) {
 		\end{lstlisting}	
 	
 	\subsection{Polynom-Akkumulation}
-	• Hashing von Werten der Form ($x_0, x_1 , ..., x_n-1$") schwierig durch Addition
+	• Hashing von Werten der Form ($x_0, x_1 , ..., x_n-1$) schwierig durch Addition
 	
-	% TODO: How do I get n-1 at the bottom instead of just n?
 	Polynom:
-	$p(z) = a_0 + a_1z + a_2z^2 + ... + a_n-1$
+	$p(z) = a_0 + a_1z + a_2z^2 + ... + a_{n-1}$
 		
 	Gut für Strings. Mit z=33 maximal 6 Kollisionen bei 50'000 englischen Wörtern.
 		
@@ -517,10 +837,11 @@ public <E> Stack<E> push(E value) { ... }
 	\subsection{Constraints}
 		\begin{lstlisting}
 ... <T extends Graphic>
-... <T extends Type1 & Type2 & ... >
-// As Java doesn't allow Diamond inheritance only one can be a class
-... <T super Graphic>
 
+// Java doesn't allow Diamond inheritance: only one can be a class
+... <T extends Type1 & Type2 & ... >
+
+... <T super Graphic>
 		\end{lstlisting}
 	
 	\subsection{Generische Type Invariance}
@@ -533,138 +854,7 @@ Collection<? extends T> x = ....
 Collection<? super T> y = ...
 		\end{lstlisting}
 
-\columnbreak
-\section{Beispiele}
-
-	\subsubsection{Switch - Case}
-	\begin{lstlisting}
-int x = 5; 
-switch(x) {
-	case 2: 
-		System.out.println("2"); 
-		break;
-	case 5: 
-		System.out.println("5"); 
-		break;
-	default: 
-		System.out.println("No match!"); 
-}
-	\end{lstlisting}
-
-	\subsubsection{for loop}
-	\begin{lstlisting}
-	for(int i = 0; i < list.size(); i++) {}
-	
-	for(var el : list) {}
-	
-	for(var el : set) {}
-	
-	for(var el : map.entrySet()) {
-		var k = el.getKey();
-		var v = el.getValue();
-	}
-	\end{lstlisting}
-
-	\subsubsection{Main Methode}
-	\begin{lstlisting}
-	public static void main(String[] args) {...}	
-	\end{lstlisting}
-
-	\subsubsection{Interface}
-	\begin{lstlisting}
-	public interface GraphicItem {
-		Vector getLocation();
-		void move(Vector delta);
-		
-		// A default implementation:
-		default void moveToCenter() {
-			var pos = getLocation();
-			move(new Vector(-pos.getX(), -pos.getY()));
-		}
-	}
-	\end{lstlisting}
-
-	\columnbreak
-
-	\subsubsection{Alle Wörter aus Buchstaben generieren}
-		\begin{lstlisting}
-Set<String> generateWords(Set<Character> input) { 
-	Set<String> result = new HashSet<>();
-	if (input.size() == 0) { 
-		result.add(""); 
-	}
-	for (Character letter : input) {
-		Set<Character> remainder = new HashSet<>(input); 
-		remainder.remove(letter);
-		for (String word : generateWords(remainder)) {
-			result.add(word + letter);
-		}
-	}
-	return result;
-}
-		\end{lstlisting}
-	
-	\subsubsection{Custom 'Linked List'}
-	\begin{lstlisting}
-public class Car {
-	private Car next;
-	// ...
-}
-public class Locomotive {
-	private Car first;
-	// ...
-}
-public class Train {
-	private Locomotive locomotive;
-	public Train() {
-		locomotive = new Locomotive();
-	}
-	
-	public void add(String name) {
-		Car first = locomotive.getFirst();
-		Car newCar = new Car(name);
-		newCar.setNext(first);
-		locomotive.setFirst(newCar);
-	}
-	
-	public boolean insert(int position, String name) {
-		if (position == 0) {
-			add(name);
-			return true;
-		}
-		Car leadingCar = getCar(position - 1);
-		if (leadingCar == null) {
-			return false;
-		}
-		Car followingCar = leadingCar.getNext();
-		Car newCar = new Car(name);
-		leadingCar.setNext(newCar);
-		newCar.setNext(followingCar);
-		return true;
-	}
-	
-	public void reverse() {
-		Car previousCar = null;
-		Car currentCar = locomotive.getFirst();
-		while (currentCar != null) {
-			Car nextCar = currentCar.getNext();
-			currentCar.setNext(previousCar);
-			previousCar = currentCar;
-			currentCar = nextCar;
-		}
-		locomotive.setFirst(previousCar);
-	}
-	
-	public Car removeFirst() {
-		Car firstCar = locomotive.getFirst();
-		if (firstCar != null) {
-			locomotive.setFirst(firstCar.getNext());
-		}
-		return firstCar;
-	}
-}
-	\end{lstlisting}
-	
+% + just print the old cheatsheet again.
 
 \end{multicols*}
 
