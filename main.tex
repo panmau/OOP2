@@ -12,7 +12,6 @@
     \setlength{\columnseprule}{0.2pt}
 		\footnotesize
 
-% TODO improve places where columnbreaks are done as soon as content is pretty much final
 \section{Big O}
 
     \includegraphics[scale=0.15]{graphic/14_big_o_notation_herleitung}
@@ -75,6 +74,9 @@ public static void function(int[] array) {
 		Wenn gesuchter Wert kleiner als Pivot: Suche im linken Teilbereich
 		
 		Wert gefunden: Abbruch und Rückgabe des Wertes
+		
+		% for code/text not to break over weirdly
+		\columnbreak
 		
 		\textbf{Rekursiv}
 			\begin{lstlisting}
@@ -174,9 +176,10 @@ int[] mergeSort(int[] elem, int left, int right) {
 	int middle = left + (right - left) / 2;
 	int[] leftArray = mergeSort(elem, left, middle);
 	int[] rightArray = mergeSort(elem, middle + 1, right);
-	return merge(leftArray, rightArray);
-}
-
+	return merge(leftArray, rightArray); }
+	
+\end{lstlisting}
+\begin{lstlisting}
 int[] merge(int[] leftArray, int[] rightArray) {
 	int leftLen = leftArray.length;
 	int rightLen = rightArray.length;
@@ -259,8 +262,7 @@ public void sort(int arr[]) {
 		
 		// call max heapify on the reduced heap 
 		heapify(arr, i, 0); 
-	} 
-} 
+	} } 
 
 // To heapify a subtree rooted with node i which is 
 // an index in arr[]. n is size of heap 
@@ -268,7 +270,6 @@ void heapify(int arr[], int n, int i) {
 	int largest = i;  // Initialize largest as root 
 	int l = 2 * i + 1;  // left = 2*i + 1 
 	int r = 2 * i + 2;  // right = 2*i + 2 
-	
 	// If left child is larger than root 
 	if (l < n && arr[l] > arr[largest]) {
 		largest = l; 
@@ -471,6 +472,8 @@ public class SudokuSolver {
 		return false; 
 	} 
 	
+	
+	
 	boolean isNumberValid(int[][] fields, int row, int col, int number) { 
 		return !isNumberUsedInRow(fields, row, number) && !isNumberUsedInCol(fields, col, number) && 
 		!isNumberUsedInSquare(fields, row, col, number); 
@@ -513,7 +516,18 @@ public class SudokuSolver {
 
 	\subsection{Greedy}
 	Lösung wählen, die im Teilschritt möglichst nahe ans Ziel kommen.
-	Beispiel Rückgeld: Grösste Münze von Betrag abziehen
+	
+	\subsubsection{Rückgeld Beispiel}
+	\begin{itemize}
+		\item Preis: 7 CHF
+		\item Bezahlt mit: 15 CHF
+		\item Ziel: Rückgeld mit minimaler Anzahl Münzen
+		\item Vorgehen:
+		\begin{itemize}
+			\item Nehme grösste Münze unter Zielwert und ziehe sie von diesem ab
+			\item Verfahre bis Zielwert = 0
+		\end{itemize}
+	\end{itemize}
 
 	\subsubsection{Set-Covering Problem}
 	\textcolor{subsectioncolor}{Beispiel Abdeckung Radiostationen in den USA}
@@ -635,34 +649,37 @@ private static int recsum(int x) {
 }
 		\end{lstlisting}
 
+% for code/text not to break over weirdly
+\columnbreak
+
 \section{Abstrakter Datentyp}
 Beschreibt Datenstruktur unabhängig von konkreter Implementierung.
 Beschreibt Attribute, Operationen auf den Attributen, Ausnahmen und Fehler
 Beschreibt das Was aber nicht das Wie.
 
-\subsection{Datenstrukturen}
-	\begin{itemize}
-		\item Speichern und organisieren Daten.
-		\item Implementieren einen ADT (Schnittstelle)
-	\end{itemize}
-
-	\subsubsection{Laufzeiten}
-
-		\begin{tabular}{c | c | c}
-			& Array & Linked List \\
-			\hline
-			Lesen & O(1) & O(n) \\
-			Einfügen & O(n) & O(1)  \\
-			Suchen & O(n) & O(n) \\
-		\end{tabular}
+	\subsection{Datenstrukturen}
+		\begin{itemize}
+			\item Speichern und organisieren Daten.
+			\item Implementieren einen ADT (Schnittstelle)
+		\end{itemize}
 	
-		\begin{tabular}{c | c | c}
-			\textbf{HashMap} & Avg & Worst \\
-			\hline
-			Lesen & O(1) & O(n) \\
-			Einfügen & O(1) & O(n)  \\
-			Suchen & O(1) & O(n) \\
-		\end{tabular}
+		\subsubsection{Laufzeiten}
+	
+			\begin{tabular}{c | c | c}
+				& Array & Linked List \\
+				\hline
+				Lesen & O(1) & O(n) \\
+				Einfügen & O(n) & O(1)  \\
+				Suchen & O(n) & O(n) \\
+			\end{tabular}
+		
+			\begin{tabular}{c | c | c}
+				\textbf{HashMap} & Avg & Worst \\
+				\hline
+				Lesen & O(1) & O(n) \\
+				Einfügen & O(1) & O(n)  \\
+				Suchen & O(1) & O(n) \\
+			\end{tabular}
 
 \section{Queue}
 	\begin{itemize}
@@ -693,7 +710,8 @@ Beschreibt das Was aber nicht das Wie.
 			\textbf{removeMin} & O(n) & O(1) \\
 		\end{tabular}
 	
-	Sorted
+	\vspace{3pt}
+	\textbf{Sorted}
 	\begin{lstlisting}
 public class SortedPriorityQueue<K,V> extends AbstractPriorityQueue<K,V>  {
 	// size left out as its just list.size()
@@ -732,7 +750,9 @@ public class SortedPriorityQueue<K,V> extends AbstractPriorityQueue<K,V>  {
 }
 	\end{lstlisting}
 
-	Unsorted
+% for code/text not to break over weirdly
+\columnbreak
+\textbf{Unsorted}
 	\begin{lstlisting}
 public class UnsortedPriorityQueue<K,V> extends AbstractPriorityQueue<K,V> {
 	// size left out as its just return list.size()
