@@ -15,6 +15,12 @@
 % TODO improve places where columnbreaks are done as soon as content is pretty much final
 \section{Big O}
 
+    \includegraphics[scale=0.15]{graphic/14_big_o_notation_herleitung}
+	\newline
+	\includegraphics[scale=0.15]{graphic/03_big_o_notation}
+	\newline
+	\includegraphics[scale=0.17]{graphic/04_primitive_operationen_zaehlen}
+
 	\subsection{Beweis}
 	\begin{itemize}
 		\item Annahme: 2n + 10 ist O(n)
@@ -44,16 +50,16 @@ public static void function(int[] array) {
 	\subsection{Eigenschaften}
 
 	\renewcommand{\arraystretch}{1.1}
-	\begin{tabular}{c | c | c}
-		Algo & Worst & Avg \\
+	\begin{tabular}{c | c | c | c}
+		Algo & Worst & Avg & Best \\
 		\hline
-		Binary Search & O(log n) & \\
-		Insertion & O($n^2$) &  \\
-		Selection & O($n^2$) &  \\
-		Bubble & O($n^2$) &  \\
-		Merge & O(n log n) &  \\
-		Quick & O($n^2$) & O(n log n) \\
-		Heap & O(n log n) & O(n log n) \\
+		Binary Search & O(log n) & O(log n) & O(1) \\
+		Insertion & O($n^2$) & O($n^2$) & O(n) \\
+		Selection & O($n^2$) & O($n^2$) & O($n^2$) \\
+		Bubble & O($n^2$) & O($n^2$) & O(n) \\
+		Merge & O(n log n) & O(n log n) & O(n log n) \\
+		Quick & O($n^2$) & O(n log n) & O(n log n) \\
+		Heap & O(n log n) & O(n log n) & O(n log n) \\
 	\end{tabular}
 	
 	\subsection{Implementationen}
@@ -296,6 +302,8 @@ void heapify(int arr[], int n, int i) {
 		\item \textbf{Vorgängerknoten}: Eltern, Grosseltern, ...
 	\end{itemize}
 
+	Binary Tree: Jeder Knoten höchstens zwei Kinder \& Kinder sind geordnetes Paar
+
 	\subsection{Höhe}
 	Maximale Tiefe der Knoten im Baum
 		\begin{lstlisting}
@@ -373,6 +381,9 @@ public T next() {
 		\end{lstlisting}
 
 \section{Algorithmenparadigmen}
+ \textbf{Algorithmus: Präzise endliche Beschreibung eines allgemeinen Verfahrens unter Verwendung
+	ausführbarer elementarer Schritte}
+
 	\subsection{Backtracking}
 		\subsubsection{Cookbook}
 			\renewcommand{\outlineii}{enumerate}
@@ -504,6 +515,45 @@ public class SudokuSolver {
 	Lösung wählen, die im Teilschritt möglichst nahe ans Ziel kommen.
 	Beispiel Rückgeld: Grösste Münze von Betrag abziehen
 
+	\subsubsection{Set-Covering Problem}
+	\textcolor{subsectioncolor}{Beispiel Abdeckung Radiostationen in den USA}
+	\includegraphics[scale=0.15]{graphic/08_set_covering_radio_stations}
+		\begin{itemize}
+			\item Optimaler Algorithmus
+			\begin{itemize}
+				\item Alle Teilmengen der Stationen aufzählen
+				\item Minimale Anzahl Stationen wählen
+				\item {\bfseries Problem:} $2^n$ mögliche Kombinationen (Potenzmenge)
+			\end{itemize}
+		\end{itemize}
+		{\bfseries $\to$ Es gibt keinen Algorithmus, der Problem schnell genug löst}
+		\newline
+		\textcolor{subsectioncolor}{Alternative}
+		\begin{itemize}
+			\item Wähle Sender, der meisten Sender abdeckt, die noch nicht abgedeckt sind
+			\item Widerholen, bis alle Sender abgedeckt sind
+		\end{itemize}
+		\begin{lstlisting}
+public static void calculateSolution(HashSet<String> statesNeeded, HashMap<String, HashSet<String>> stations) {
+	var finalStations = new HashSet<String>();
+	while (!statesNeeded.isEmpty()) {
+		String bestStation = "";
+		var statesCovered = new HashSet<String>();
+		for (String station : stations.keySet()) {
+			var covered = new HashSet<String>(statesNeeded);
+			covered.retainAll(stations.get(station));
+			if (covered.size() > statesCovered.size()) {
+				bestStation = station;
+				statesCovered = covered;
+			}
+		}
+		statesNeeded.removeAll(statesCovered);
+		finalStations.add(bestStation);
+	}
+	System.out.println(finalStations);
+}
+		\end{lstlisting}
+
 	\subsection{Teile \& Herrsche}
 		\begin{itemize}
 			\item Problem aufteilen
@@ -540,6 +590,27 @@ public class SudokuSolver {
 			\item Binäre Rekursion: Wenn zwei rekursive Aufrufe in allen nicht-terminalen Aufrufen ausgeführt werden
 			\item Endrekursion: Rekursiver Aufruf ist \underline{letzte} Anweisung in der Funktion
 		\end{itemize}
+
+ 	\subsubsection{NDigitNums}
+		\begin{lstlisting}
+public static void findNDigitNums(String currentNumber, int n, int target, List<Integer>
+resultList) {
+	if (n > 0 && target >= 0) {
+		char digit = '0';
+		if (currentNumber.equals("")) {
+			digit = '1';
+		}
+		while (digit <= '9') {
+			String num = currentNumber + digit;
+			int newTarget = target - (digit - '0');
+			findNdigitNums(num, n-1, newTarget, resultList);
+			digit++;
+		}
+	} else if (n == 0 && target == 0) {
+		resultList.add(Integer.valueOf(currentNumber));
+	}
+}
+		\end{lstlisting}
 
 	\subsection{Endrekursion}
 	Weniger Speicher benötigt.
@@ -784,6 +855,13 @@ for (int i = 0; i < s.length(); i++) {
 	$p(z) = a_0 + a_1z + a_2z^2 + ... + a_{n-1}$
 		
 	Gut für Strings. Mit z=33 maximal 6 Kollisionen bei 50'000 englischen Wörtern.
+
+	\subsection{Erweiterbares Hashing}
+	Beim erweiterbaren Hashing wird binäres Ergebnis der Hashfunktion verwendet, die auf einen grösaseren Bereich abbildet.
+	
+	Beim Überlauf eines Behälters wird ein weiteres Bit des Hashwertes hinzugezogen.
+	
+	Somit ist keine Reorganisation der gesamten Tabelle notwendig.
 		
 	\subsection{Kollisionsbehandlung}
 		\subsubsection{Geschlossene Adressierung}
@@ -803,16 +881,13 @@ for (int i = 0; i < s.length(); i++) {
 		Wird Datensatz gelöscht, kann dies Sondierungsfolge für anderen Datensatz unterbrechen.
 		
 		Datensätze nicht physisch löschen, sondern nur als gelöscht markieren. (Behälter ist: frei, belegt oder gelöscht)
-		
-	\subsection{Erweiterbares Hashing}
-		Beim erweiterbaren Hashing wird binäres Ergebnis der Hashfunktion verwendet, die auf einen grösaseren Bereich abbildet.
-		
-		Beim Überlauf eines Behälters wird ein weiteres Bit des Hashwertes hinzugezogen.
-		
-		Somit ist keine Reorganisation der gesamten Tabelle notwendig.
 
 \section{Generics}
 Type Erasure!
+
+Statisches Attribut kann nicht generisch sein.
+
+=> Es wäre unklar, welchen Typ das statische Attribut tatsächlich hat, da Attribut zwischen Instanzen geteilt wird.
 
 	\begin{tabular}{c | c}
 		\textbf{Conventions} &  \\
