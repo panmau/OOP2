@@ -167,6 +167,10 @@ void bubbleSort(int[] array) {
 	} }
 			\end{lstlisting}
 		
+
+% for code/text not to break over weirdly
+\columnbreak
+		
 		\subsubsection{Merge Sort}
 		S auf Folgen S1 und S2 verteilen, rekursiv sortieren, S1 und S2 in sortierter Folge zusammenfassen
 			\begin{lstlisting}
@@ -235,7 +239,17 @@ int partition(int[] arr, int low, int high) {
 }
 			\end{lstlisting}
 
+% for code/text not to break over weirdly
+\columnbreak
+
 		\subsubsection{Heap Sort}
+			Binärer Baum mit folgenden Eigenschaften
+			
+			• Baum ist vollständig (Nur Nodes ganz rechts auf der untersten dürfen fehlen. Nodes müssen 
+			sozusagen linksbündig sein)
+			
+			• Schlüssel jedes Knotens kleiner gleich Schlüssel seiner Kinder
+		
 			\begin{itemize}
 				\item \textbf{max heap}: tree where parents are always > childs.
 				\item \textbf{heapify}: creates max heap but assumes part of array is already sorted
@@ -292,7 +306,8 @@ void heapify(int arr[], int n, int i) {
 } 
 			\end{lstlisting}
 
-		
+% for code/text not to break over weirdly
+\columnbreak
 		
 \section{Bäume}
 	\begin{itemize}
@@ -328,41 +343,31 @@ public int depth(Position<E> p) {
 		\end{lstlisting}
 	\subsection{Traversierung}
 		\subsubsection{Preorder W-L-R}
+		\textbf{Rekursiv}
 			\begin{lstlisting}
 visit(v)
 for each child w of v
   preOrder(w)
 			\end{lstlisting}
 		
-		\subsubsection{Postorder L-R-W}
+		\textbf{Iterativ}
 			\begin{lstlisting}
-for each child w of v
-  postOrder(w)
-visit(v)
-			\end{lstlisting}
-		
-		\subsubsection{Breadth-First}
-		Alle Knoten der Tiefe t besuchen, bevor Knoten der Tiefe t+1 besucht werden
-			\begin{lstlisting}
-// Initialize queue Q containing root
-while Q not empty
-  v = Q.dequeue()
-  visit(v)
-  for each child w in children(v)
-    Q.enqueue(w)
-			\end{lstlisting}
-		
-		\subsubsection{Inorder L-W-R}
-			\begin{lstlisting}
-if hasLeft(v)
-  inOrder(left(v))
-visit(v)
-if hasRight(v)
-  inOrder(right(v))
-			\end{lstlisting}
+// Pseudo Code
+procedure iterativePreorder(node)
+	if node == null
+		return
+	stack <- empty stack
+	stack.push(node)
+	while not stack.isEmpty()
+		node <- stack.pop()
+		visit(node)
+		// right child is pushed first so that left is processed first
+		if node.right != null
+			stack.push(node.right)
+		if node.left != null
+			stack.push(node.left)
 
-	\subsection{Preorder Iterator}
-		\begin{lstlisting}
+// Iterator
 public T next() {
 	if (stack.empty()) {
 		stack.push(root);
@@ -379,7 +384,70 @@ public T next() {
 	}
 	return node.getValue(); 
 }
-		\end{lstlisting}
+			\end{lstlisting}
+		
+		\subsubsection{Postorder L-R-W}
+		\textbf{Rekursiv}
+			\begin{lstlisting}
+for each child w of v
+  postOrder(w)
+visit(v)
+			\end{lstlisting}
+		
+		\textbf{Iterativ}
+			\begin{lstlisting}
+procedure iterativePostorder(node)
+	stack <- empty stack
+	lastNodeVisited <- null
+	while not stack.isEmpty() or node != null
+		if node != null
+		stack.push(node)
+		node <- node.left
+		else
+			peekNode <- stack.peek()
+			// if right child exists and traversing node
+			// from left child, then move right
+			if peekNode.right != null and lastNodeVisited != peekNode.right
+				node <- peekNode.right
+			else
+				visit(peekNode)
+				lastNodeVisited <- stack.pop()
+			\end{lstlisting}
+		
+		\subsubsection{Breadth-First}
+		Alle Knoten der Tiefe t besuchen, bevor Knoten der Tiefe t+1 besucht werden
+			\begin{lstlisting}
+// Initialize queue Q containing root
+while Q not empty
+  v = Q.dequeue()
+  visit(v)
+  for each child w in children(v)
+    Q.enqueue(w)
+			\end{lstlisting}
+		
+		\subsubsection{Inorder L-W-R}
+		\textbf{Rekursion}
+			\begin{lstlisting}
+if hasLeft(v)j
+  inOrder(left(v))
+visit(v)
+if hasRight(v)
+  inOrder(right(v))
+			\end{lstlisting}
+		
+		\textbf{Iterativ}
+			\begin{lstlisting}
+procedure iterativeInorder(node)
+	stack <- empty stack
+	while not stack.isEmpty() or node != null
+		if node != null
+			stack.push(node)
+			node <- node.left
+		else
+			node <- stack.pop()
+			visit(node)
+			node <- node.right
+			\end{lstlisting}
 
 \section{Algorithmenparadigmen}
  \textbf{Algorithmus: Präzise endliche Beschreibung eines allgemeinen Verfahrens unter Verwendung
@@ -434,6 +502,10 @@ boolean knightTour(int[][] visited, int x, int y, int pos) {
 	return false;
 }
 			\end{lstlisting}
+		
+		
+% for code/text not to break over weirdly
+\columnbreak
 		
 		\subsubsection{Beispiel Sudoku Solver}
 			\begin{lstlisting}
@@ -514,6 +586,10 @@ public class SudokuSolver {
 } 
 			\end{lstlisting}
 
+
+% for code/text not to break over weirdly
+\columnbreak
+
 	\subsection{Greedy}
 	Lösung wählen, die im Teilschritt möglichst nahe ans Ziel kommen.
 	
@@ -582,6 +658,9 @@ public static void calculateSolution(HashSet<String> statesNeeded, HashMap<Strin
 			\item Lösung auf Grundlage bereits berechneter Ergebnisse finden
 		\end{itemize}
 
+% for code/text not to break over weirdly
+\columnbreak
+
 \section{Rekursion}
 	\begin{outline}
 		\1 Rekursive Aufrufe werden auf Call Stack gelegt, bis Base Case erreicht
@@ -649,9 +728,6 @@ private static int recsum(int x) {
 }
 		\end{lstlisting}
 
-% for code/text not to break over weirdly
-\columnbreak
-
 \section{Abstrakter Datentyp}
 Beschreibt Datenstruktur unabhängig von konkreter Implementierung.
 Beschreibt Attribute, Operationen auf den Attributen, Ausnahmen und Fehler
@@ -680,6 +756,10 @@ Beschreibt das Was aber nicht das Wie.
 				Einfügen & O(1) & O(n)  \\
 				Suchen & O(1) & O(n) \\
 			\end{tabular}
+
+
+% for code/text not to break over weirdly
+\columnbreak
 
 \section{Queue}
 	\begin{itemize}
@@ -750,8 +830,6 @@ public class SortedPriorityQueue<K,V> extends AbstractPriorityQueue<K,V>  {
 }
 	\end{lstlisting}
 
-% for code/text not to break over weirdly
-\columnbreak
 \textbf{Unsorted}
 	\begin{lstlisting}
 public class UnsortedPriorityQueue<K,V> extends AbstractPriorityQueue<K,V> {
@@ -773,7 +851,13 @@ public class UnsortedPriorityQueue<K,V> extends AbstractPriorityQueue<K,V> {
 		list.add(newest);
 		return newest;
 	}
-
+	\end{lstlisting}
+	
+	
+	% for code/text not to break over weirdly
+	\columnbreak
+	
+	\begin{lstlisting}
 	public Entry<K,V> min() {
 		if (list.isEmpty()) {
 			return null;
@@ -860,15 +944,17 @@ class Adapter extends ClassWeWantToMatch {
 		
 		• Gut für Schlüssel fixer Länge, grösser/gleich Anzahl Bits von Integer
 		
+		• Disadvantage: Strings “abcd” and “dcba” and “badc” etc. have the same hash.
+		
 		\begin{lstlisting}
 int hash = 0;
 for (int i = 0; i < s.length(); i++) {
-	hash = (R * hash + s.charAt(i)) % m;
 	// R ist Konstante. Eine kleine Primzahl
+	hash = (R * hash + s.charAt(i)) % m; 
 }
 		\end{lstlisting}	
 	
-	\subsection{Polynom-Akkumulation}
+	\subsubsection{Polynom-Akkumulation}
 	• Hashing von Werten der Form ($x_0, x_1 , ..., x_n-1$) schwierig durch Addition
 	
 	Polynom:
